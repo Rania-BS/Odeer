@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "string.h": "c",
-        "sdl_mixer.h": "c",
-        "sdl_image.h": "c",
-        "stdio.h": "c",
-        "integration.h": "c"
-    }
-}
