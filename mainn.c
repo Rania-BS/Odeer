@@ -17,7 +17,7 @@ Mix_Music *musique;
 
 
 SDL_Event event ;
-screen =SDL_SetVideoMode(1500,900,32,SDL_HWSURFACE |SDL_DOUBLEBUF);
+screen =SDL_SetVideoMode(1920,1080,32,SDL_HWSURFACE |SDL_DOUBLEBUF);
 init_back(&b);
 music(musique);
 while(run) {
