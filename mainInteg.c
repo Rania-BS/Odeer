@@ -1,5 +1,4 @@
 #include "integration.h"
-#include "perso.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_image.h>
@@ -9,6 +8,12 @@
 #include <string.h>
 
 /* ---------------- PROGRESS ------------------- */
+
+/* perso part */
+
+// perso done fully (jump can still be improved)
+
+/* fin partie perso */
 
 /* background part */
 
@@ -22,7 +27,7 @@
 /* partie minimap */
 
 // Init minimap -- Done (Change minimap background to match the main background)
-// Affichage du minimap -- done (Only the character is needed to track it's position on the minimap)
+// Affichage du minimap -- done (problem fil niveau ta3 l pos (l pos ta3 l dot < pos ta3 l perso belwa9t))
 // MAJ minimap -- Done (just needs the character's position to update the dot's location)
 // time -- Done
 // Collision -- No (Needs the character for it to be implemented into the integration)
@@ -46,6 +51,9 @@ void main()
 
     /* partie perso */
     personne p; 
+    personne h ;  
+    vie v ;     
+    score s ;  
     /*fin partie perso*/
 
     /* background down */
@@ -57,7 +65,7 @@ void main()
     
     /* partie minimap */
     minimap m;
-    int temps=0,h,min;
+    int temps=0,hours,min;
     char buffer[20],str_time[20];
     SDL_Rect pos;
     pos.x=0;
@@ -70,6 +78,10 @@ void main()
     TTF_Init();
     police=TTF_OpenFont("./fonts/Roboto-Medium.ttf",25);
     //
+    
+    /* initialisation perso */
+    initPerso (&p);
+    /* fin initialisation perso */
 
     /* initialisation minimap */
     initminimap(&m);
@@ -92,25 +104,27 @@ void main()
 
     /* debut boucle du jeu */ while (boucle)
     {
+
              /* affichage du background */
             afficher_back(bg,screen);
                  /* fin affichage background */
+                
+                /* affichage du perso */
+            afficherPerso (p,screen);
+            /* fin affichage perso */
 
                  /* affichage minimap */
                  afficherminimap(m,screen);
                  /* fin affichage minimap */
 
-                 /* MAJ minimap */
-                    MAJMinimap(p,&m);
-                 /* fin MAJ Minimap */
 
                  /* affichage du temps */
                     postext.x=screen->w-250;
                     postext.y=25;
                     time(&temps);
-                    h=temps/60;
+                    hours=temps/60;
                     min=temps%60;
-                    sprintf(buffer,"%d ",h);
+                    sprintf(buffer,"%d ",hours);
                     strcpy(str_time,buffer);
                     strcat(str_time,"min(s) : ");
                     strcpy(buffer,"\0");
@@ -118,7 +132,7 @@ void main()
                     strcat(str_time,buffer);
                     texte= TTF_RenderText_Blended(police,str_time,white);
                     SDL_BlitSurface(texte,NULL,screen,&postext);
-                    printf("time = %s\n",str_time);
+                   // printf("time = %s\n",str_time);
                  /* fin affichage temps */
 
              /* lire les events */    
@@ -134,20 +148,26 @@ void main()
                     {
                        
                         case SDLK_RIGHT:
-                            bouton[0] = 1;
+                            scrolling_right(&bg,vitesse);
+                            deplacer (&p,0 ) ; 
+                            calculerscore (&p);
+                            animer ( &p,0  ) ; 
                             break;
                         case SDLK_LEFT:
-                            bouton[1] = 1;
-                            break;
-                        case SDLK_UP :
-                            bouton[2]= 1;
-                            break;
-                        case SDLK_DOWN:
-                            bouton[3] = 1;
+                            scrolling_left(&bg,vitesse);
+                            deplacer (&p,1 ) ; 
+                            animer ( &p,1  ) ;
                             break;
                         case SDLK_ESCAPE:
                             run = false;
                             break;
+                        case SDLK_SPACE:
+                            sautt(&p);
+                            if (p.personneisjumping==1)
+                            scrolling_up(&bg,vitesse);
+                            else
+                            scrolling_down(&bg,vitesse);
+                        break ; //repterS(&p);
                     }
                     break;
 
@@ -171,25 +191,11 @@ void main()
                     break;
             }
         }
+                         /* MAJ minimap */
+                    MAJMinimap(p,&m);
+                 /* fin MAJ Minimap */
         /* fin pollevent */
 
-        /* controls the scrolling of the background */ 
-if(bouton[0])
-        {
-          scrolling_right(&bg,vitesse);
-}
-if(bouton[1])
-        {
-          scrolling_left(&bg,vitesse);
-}
-if(bouton[2])
-        {
-          scrolling_up(&bg,vitesse);
-        }
-if(bouton[3])
-        {
-          scrolling_down(&bg,vitesse);
-        }
         /* scrolling of the background above */
 
 

@@ -6,7 +6,44 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
-#include "perso.h"
+
+/* partie perso */
+
+typedef struct
+{
+    SDL_Rect poss; /*!< rectangle*/
+    SDL_Surface *texte;/*!< surface. */
+    char chaine[20];
+    int scoree;
+    int max ; 
+} score;
+
+typedef struct 
+{
+ int nb ; 
+ SDL_Surface *vie1 ; 
+ SDL_Surface *vie2 ; 
+ SDL_Surface *vie3 ; 
+ SDL_Surface *gameover ;  
+  
+SDL_Rect ps1 ; 
+} vie ; 
+
+typedef struct 
+{
+SDL_Surface *image0 ,*image1 ;
+SDL_Rect position ;
+SDL_Rect sprite ; 
+int speedup,speeddown,ground,gravity;
+int personneisjumping;
+vie v; 
+score s;
+SDL_Rect pos ; /*!< rectangle*/
+} personne ; 
+
+/* fin partie perso */
+
+/* partie minimap */
 
 typedef struct
 {
@@ -16,6 +53,10 @@ SDL_Rect posmap;
 SDL_Rect posdot;
 } minimap;
 
+/* fin partie minimap */
+
+/* partie background */
+
 typedef struct 
 {
      SDL_Surface *background;
@@ -24,6 +65,33 @@ typedef struct
      SDL_Rect positionperso;
      SDL_Rect camera;
 }background ;
+
+/* fin partie background */
+
+/* ----------------- Calling of functions ----------------- */
+
+/* partie perso */
+
+void initPerso (personne *p ) ;
+void afficherPerso (personne p, SDL_Surface *screen)  ;
+void calculerscore (personne *p);
+void deplacer (personne *p,int direction ) ; 
+void animer ( personne *p, int direction  ) ; 
+void apresS( personne *p);
+void repterS( personne *p ) ;
+void saut(personne *p);
+void sautt(personne *p);
+
+void afficherPersoMULTI (personne h, SDL_Surface *screen) ;
+void initPersoMULTI (personne *h )  ; 
+void calculerscoreMULTI (personne *h) ; 
+void sautMULTI(personne *h);
+void deplacerMULTI (personne *h,int direction );
+void animerMULTI ( personne *h, int direction  )  ;
+void repterSMULTI(personne *h) ;
+void apresSMULTI(personne *h);
+
+/* fin partie perso */
 
 /* partie minimap */
 void initminimap(minimap *m);
