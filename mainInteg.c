@@ -9,13 +9,17 @@
 
 /* ---------------- PROGRESS ------------------- */
 
-/* perso part */
+/* perso part Done*/
 
 // perso done fully (jump can still be improved)
 
 /* fin partie perso */
 
-/* background part */
+/* ES part like 70% done*/
+    // comment functions here
+/* fin partie ES */
+
+/* background part Done*/
 
 // Init background -- Done
 // Affiche background -- Done
@@ -24,14 +28,13 @@
 
 /* fin partie background */
 
-/* partie minimap */
+/* partie minimap Done*/
 
 // Init minimap -- Done
 // Affichage du minimap -- done
 // MAJ minimap -- Done
 // time -- Done
-// Collision -- No (Needs the character for it to be implemented into the integration)
-// Collision -- side of the collision still needs to be developped
+// Collision -- Done
 // getpixel -- Works.
 
 
@@ -82,7 +85,7 @@ void main()
     
     /* partie minimap */
     minimap m;
-    int temps=0,hours,min;
+    int temps=0,hours,min,collision;
     char buffer[20],str_time[20];
     SDL_Rect pos;
     pos.x=0;
@@ -185,6 +188,9 @@ void main()
                     SDL_BlitSurface(texte,NULL,screen,&postext);
                  /* fin affichage temps */
 
+            /* collision detection function */
+            collision=collisionPP(p,bg.masque);
+            /* fin collision detection */
              /* lire les events */    
         while ( SDL_PollEvent( &event ) ) 
         { 
@@ -198,22 +204,30 @@ void main()
                     {
                        
                         case SDLK_RIGHT:
+                        if (collision!=2) {
                             scrolling_right(&bg,vitesse);
                             deplacer (&p,0 ) ; 
                             calculerscore (&p);
                             animer ( &p,0  ) ; 
+                        }
                             break;
                         case SDLK_LEFT:
+                        if (collision!=4)
+                        {
                             scrolling_left(&bg,vitesse);
                             deplacer (&p,1 ) ; 
                             animer ( &p,1  ) ;
+                        }
                             break;
                         case SDLK_SPACE:
+                        if (collision!=1)
+                        {
                             sautt(&p);
                             if (p.personneisjumping==1)
                             scrolling_up(&bg,vitesse);
                             else
                             scrolling_down(&bg,vitesse);
+                        }
                         break ; //repterS(&p);
                     }
                     break;

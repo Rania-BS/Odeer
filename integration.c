@@ -700,16 +700,24 @@ box[4][0]=p.position.x+p.sprite.w;box[4][1]=p.position.y+(p.sprite.h/2);
 box[5][0]=p.position.x;box[5][1]=p.position.y+p.sprite.h;
 box[6][0]=p.position.x+(p.image0->w/2);box[6][1]=p.position.y+p.sprite.h;
 box[7][0]=p.position.x+p.sprite.w;box[7][1]=p.position.y+p.sprite.h;
-for(i=0;i<8;i++)
-for(i=0;i<8;i++)
+
+for(i=0;i<8;i++) // 1 up -- 2 right -- 3 bottom -- 4 left
 {
 SDL_GetRGB(getpixel(masque,box[i][a],box[i][j]),masque->format,&color.r,&color.g,&color.b);
-
 if (color.r==255 && color.g==255 && color.b==255)
 {
-collision=1;
+  if (i==0 || i == 1 || i == 2)
+    collision = 1;
+            else if (i==3)
+            collision=4;
+                else if (i==4)
+                  collision = 2;
+                      else if (i==5 || i == 6 || i == 7)
+                          collision=3;
 }
+
 }
+
 return collision;
 }
 
@@ -759,21 +767,25 @@ b->positionperso.x=0;
 b->positionperso.y=0;
 
 
+b->masque = IMG_Load("masque.jpg");
+b->posmasque.x=0;
+b->posmasque.y=-5;
+
 b->PositionBg.x=0;
 b->PositionBg.y=0;
-
-
 b->camera.x = 0;
 b->camera.y = 0;
 b->camera.w = 8000;
 b->camera.h = 1080;
+
+
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 
 void afficher_back(background b , SDL_Surface *screen)
 {
-
+SDL_BlitSurface(b.masque,NULL,screen,&(b.posmasque));
 SDL_BlitSurface(b.background,&(b.camera),screen,&(b.PositionBg));
 }
 //---------------------------------------------------------------------------------------------------------------------

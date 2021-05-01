@@ -71,11 +71,9 @@ void Collision_coin(e_coin coin,SDL_Surface *ecran,SDL_Rect pos,int *col);
 typedef struct
 {
 SDL_Surface *map;
-SDL_Surface *masque;
 SDL_Surface *dot;
 SDL_Rect posmap;
 SDL_Rect posdot;
-SDL_Rect posmasque;
 } minimap;
 
 /* fin partie minimap */
@@ -85,12 +83,12 @@ SDL_Rect posmasque;
 typedef struct 
 {
      SDL_Surface *background;
-     //SDL_Surface *masque;
      SDL_Surface *perso;
      SDL_Rect PositionBg;
-    // SDL_Rect PositionMasque;
      SDL_Rect positionperso;
      SDL_Rect camera;
+     SDL_Surface *masque;
+     SDL_Rect posmasque;
 }background ;
 
 /* fin partie background */
