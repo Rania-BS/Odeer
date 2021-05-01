@@ -56,6 +56,23 @@ void main()
     score s ;  
     /*fin partie perso*/
 
+    /* partie ES */
+    int running=1,y,minES=600, max = 800,z=1,k,i=1,r=500,c=1,j,t=1,test=0,col;
+    int numkeys;
+	Uint8 * keys;
+
+	Uint32 timer,elapsed;
+
+    e_coin coin[6];
+	const int FPS=5;
+    SDL_Surface *image;
+    SDL_Surface *image2;
+    SDL_WM_SetCaption("LOST LIFE",NULL);
+    SDL_Rect rect;
+    rect.x=dep_alea (800,0);
+    rect.y=700;
+    /* fin partie ES */
+
     /* background down */
     background bg;
     bool run = true;
@@ -82,6 +99,15 @@ void main()
     /* initialisation perso */
     initPerso (&p);
     /* fin initialisation perso */
+
+    /* initialisation ES */
+    intialiser_coin(&coin[0],700,800);
+  /*  intialiser_coin(&coin[1],1900,540);
+    intialiser_coin(&coin[2],5108,750);
+    intialiser_coin(&coin[3],6180,750);
+    intialiser_coin(&coin[4],8826,750);
+    intialiser_coin(&coin[5],8136,750); */
+    /* fin initialisation ES */
 
     /* initialisation minimap */
     initminimap(&m);
@@ -112,7 +138,29 @@ void main()
                 /* affichage du perso */
             afficherPerso (p,screen);
             /* fin affichage perso */
-                                     /* MAJ minimap */
+
+                    /* ES */
+                        anim_coin(&c,&coin[0]);
+                        affichercoin(coin[0] ,screen);
+                        Collision_coin(coin[0],screen,pos,&col);
+                        if (col==1)
+                        test=1;
+                        image=IMG_Load("e1.png");
+                        image2=IMG_Load("e2.png");
+                        if (k<rect.x)
+                        z=-1;
+                        else 
+                        z=1;
+                        k=dep_alea (800,300);
+                        rect.x=dep_alea (1000,1050);
+                        rect.y=900;
+                        if(z==-1)
+                        SDL_BlitSurface(image,NULL, screen, &rect);
+                        if(z==1)
+                        SDL_BlitSurface(image2,NULL, screen, &rect);
+                    /* fin ES */
+
+                 /* MAJ minimap */
                     MAJMinimap(p,&m);
                  /* fin MAJ Minimap */
 
@@ -124,7 +172,7 @@ void main()
                  /* affichage du temps */
                     postext.x=screen->w-250;
                     postext.y=25;
-                    time(&temps);
+                    affichertemps(&temps);
                     hours=temps/60;
                     min=temps%60;
                     sprintf(buffer,"%d ",hours);
@@ -135,7 +183,6 @@ void main()
                     strcat(str_time,buffer);
                     texte= TTF_RenderText_Blended(police,str_time,white);
                     SDL_BlitSurface(texte,NULL,screen,&postext);
-                   // printf("time = %s\n",str_time);
                  /* fin affichage temps */
 
              /* lire les events */    

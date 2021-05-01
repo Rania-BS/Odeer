@@ -44,6 +44,28 @@ SDL_Rect pos ; /*!< rectangle*/
 
 /* fin partie perso */
 
+/* partie ENTITE SECONDAIRE */
+
+//********struct ENEMI coin**********
+
+typedef struct e_coin 
+{ 
+SDL_Surface* image_coin;
+SDL_Rect pos;
+
+}e_coin ;
+
+
+/******* HEAD coin *********/
+
+void intialiser_coin(e_coin *coin,int x,int y);
+void affichercoin(e_coin coin,SDL_Surface *ecran);
+void anim_coin(int *i,e_coin *coin);
+int dep_alea ( int positionmax, int positionmin   );
+void Collision_coin(e_coin coin,SDL_Surface *ecran,SDL_Rect pos,int *col);
+
+/* fin partie ES */
+
 /* partie minimap */
 
 typedef struct
@@ -98,7 +120,7 @@ void apresSMULTI(personne *h);
 void initminimap(minimap *m);
 void afficherminimap(minimap m,SDL_Surface *screen);
 void MAJMinimap(personne p,minimap *m);
-void time(int *time);
+void affichertemps(int *time);
 int collisionPP(personne p,SDL_Surface *masque);
 Uint32 getpixel(SDL_Surface *surface, int x,int y);
 /* partie minimap */

@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 /* partie perso below */
 
@@ -582,6 +583,77 @@ void apresSMULTI(personne *h)
 
 /* fin partie perso */
 
+/* partie ES below */
+
+void intialiser_coin(e_coin *coin,int x,int y)
+{
+    coin->pos.x=x;
+    coin->pos.y=y;
+}
+
+
+
+void affichercoin(e_coin coin,SDL_Surface *ecran)
+{
+    SDL_Rect pos;
+    pos.x=coin.pos.x-(coin.image_coin)->w;
+    pos.y=coin.pos.y;
+    SDL_BlitSurface( coin.image_coin,NULL, ecran,&pos);
+}
+
+
+
+int dep_alea ( int positionmax, int positionmin   )
+{
+    int pos;
+    srand(time(NULL));
+    pos=rand()%(positionmax-positionmin+1)+positionmin;
+
+
+    return pos;
+}
+
+
+
+void anim_coin(int *i,e_coin *coin)
+{
+    char lien[40];
+    int a;
+    (*i)++;
+    if(*i>10)
+    {
+        *i=1;
+    }
+    sprintf(lien,"%d.png",*i);
+    
+    coin->image_coin = IMG_Load(lien);
+}
+
+
+void Collision_coin(e_coin coin,SDL_Surface *ecran,SDL_Rect pos,int *col)
+{ 
+pos.x=pos.x-ecran->w;
+  
+  *col=1;
+  
+   if ((pos.y +ecran->h < coin.pos.y + coin.image_coin->h)||(coin.pos.x+coin.image_coin->w < pos.x)||(coin.pos.y+coin.image_coin->h < pos.y)||(coin.pos.x > pos.x+ecran->w ))// trop en bas
+   {*col=0;}
+
+   if ((pos.x > coin.pos.x + coin.image_coin->w) ||(coin.pos.y+coin.image_coin->h < pos.y)||(coin.pos.y > pos.y+ecran->h)||(coin.pos.x+coin.image_coin->w > pos.x+ecran->w ))    // trop à droite   
+   {*col=0;}
+   
+   if ((pos.x + ecran->w < coin.pos.x)||(coin.pos.y+coin.image_coin->h < pos.y)||(coin.pos.y > pos.y+ecran->h)||(coin.pos.x < pos.x)) // trop à gauche
+   {*col=0;}
+   
+   
+   
+   if ((pos.y + ecran->h < coin.pos.y) ||(pos.y > coin.pos.y)||(coin.pos.x+coin.image_coin->w < pos.x)||(coin.pos.x > pos.x+ecran->w ))  // trop en haut
+   {*col=0;}
+
+}
+
+/* fin partie ES */
+
 /* Partie minimap below */
 
 void initminimap(minimap *m)
@@ -589,6 +661,7 @@ void initminimap(minimap *m)
 m->map= IMG_Load("minimap.jpg");
 m->dot= IMG_Load("dot.png");
 }
+
 void afficherminimap(minimap m,SDL_Surface* screen)
 {
 m.posmap.x=0;
@@ -597,7 +670,8 @@ SDL_BlitSurface(m.map,NULL,screen,&m.posmap);
 m.posdot.x+=m.posmap.x-3;
 SDL_BlitSurface(m.dot,NULL,screen,&m.posdot);
 }
-void time(int *time)
+
+void affichertemps(int *time)
 {
 int tempsms;
 tempsms= SDL_GetTicks();
@@ -609,11 +683,10 @@ void MAJMinimap(personne p,minimap *m)
 
 m->posdot.x=(p.position2.x/6.25);
 m->posdot.y= p.position.y/11-p.sprite.h/11;
-//printf("dot pos x = %d y = %d\n",m->posdot.x,m->posdot.y);
 
 }
 
-int collisionPP(personne p,SDL_Surface *masque)
+int collisionPP(personne p,SDL_Surface *masque) // edit needed
 {
 int collision=0,i,j=1,a=0;
 SDL_Color color;
