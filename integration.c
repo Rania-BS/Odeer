@@ -660,6 +660,7 @@ void initminimap(minimap *m)
 {
 m->map= IMG_Load("minimap.jpg");
 m->dot= IMG_Load("dot.png");
+
 }
 
 void afficherminimap(minimap m,SDL_Surface* screen)
