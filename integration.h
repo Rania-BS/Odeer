@@ -33,6 +33,7 @@ typedef struct
 {
 SDL_Surface *image0 ,*image1 ;
 SDL_Rect position ;
+SDL_Rect position2;
 SDL_Rect sprite ; 
 int speedup,speeddown,ground,gravity;
 int personneisjumping;

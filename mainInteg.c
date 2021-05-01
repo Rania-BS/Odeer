@@ -26,9 +26,9 @@
 
 /* partie minimap */
 
-// Init minimap -- Done (Change minimap background to match the main background)
-// Affichage du minimap -- done (problem fil niveau ta3 l pos (l pos ta3 l dot < pos ta3 l perso belwa9t))
-// MAJ minimap -- Done (just needs the character's position to update the dot's location)
+// Init minimap -- Done
+// Affichage du minimap -- done
+// MAJ minimap -- Done
 // time -- Done
 // Collision -- No (Needs the character for it to be implemented into the integration)
 // Collision -- side of the collision still needs to be developped
@@ -112,6 +112,9 @@ void main()
                 /* affichage du perso */
             afficherPerso (p,screen);
             /* fin affichage perso */
+                                     /* MAJ minimap */
+                    MAJMinimap(p,&m);
+                 /* fin MAJ Minimap */
 
                  /* affichage minimap */
                  afficherminimap(m,screen);
@@ -158,9 +161,6 @@ void main()
                             deplacer (&p,1 ) ; 
                             animer ( &p,1  ) ;
                             break;
-                        case SDLK_ESCAPE:
-                            run = false;
-                            break;
                         case SDLK_SPACE:
                             sautt(&p);
                             if (p.personneisjumping==1)
@@ -191,9 +191,7 @@ void main()
                     break;
             }
         }
-                         /* MAJ minimap */
-                    MAJMinimap(p,&m);
-                 /* fin MAJ Minimap */
+
         /* fin pollevent */
 
         /* scrolling of the background above */

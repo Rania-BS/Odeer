@@ -21,6 +21,7 @@ void initPerso (personne *p )
 p->image0= IMG_Load("mario.png") ; 
 p->position.x = 100 ;
 p->position.y = 935;
+p->position2.x=100;
 SDL_SetColorKey(p->image0,SDL_SRCCOLORKEY,SDL_MapRGB(p->image0->format,255,255,255)) ; 
 p->sprite.x= 0;
 p->sprite.y= 0; 
@@ -233,7 +234,13 @@ void deplacer (personne *p,int direction )
 {  
   case 0 : 
     { 
-     p->position.x+=10 ; 
+     p->position.x+=10 ; // 10
+     p->position2.x+=10;
+          if (p->position.x +195 > 1440 ) 
+  { 
+     p->position.x = 1440-195 ; 
+     p->position2.x-=5;
+  }   
    if (event.key.keysym.sym==SDLK_m)
         { 
              p->position.x +=50 ; 
@@ -243,9 +250,10 @@ void deplacer (personne *p,int direction )
  case 1 : 
 {  
 p->position.x-= 10 ;
+   p->position2.x-=10;
      if (event.key.keysym.sym==SDLK_m)
         { 
-             p->position.x -=50 ; 
+             p->position.x -=50 ;
          }
       break ;  
 }
@@ -254,11 +262,8 @@ p->position.x-= 10 ;
   if (p->position.x<0)
     {
      p->position.x= 0 ; 
+        p->position2.x=0;
     } 
-  /*if (p->position.x +195 > 966 ) 
-  { 
-     p->position.x = 966-195 ; 
-  }   */
 }
 
 
@@ -589,10 +594,7 @@ void afficherminimap(minimap m,SDL_Surface* screen)
 m.posmap.x=0;
 m.posmap.y=0;
 SDL_BlitSurface(m.map,NULL,screen,&m.posmap);
-/*m.posdot.x+=m.posmap.x;
-m.posdot.y+=m.posmap.y; */
-m.posdot.x=m.posdot.x/16;
-m.posdot.y=m.posdot.y/4;
+m.posdot.x+=m.posmap.x-3;
 SDL_BlitSurface(m.dot,NULL,screen,&m.posdot);
 }
 void time(int *time)
@@ -604,10 +606,11 @@ tempsms= SDL_GetTicks();
 
 void MAJMinimap(personne p,minimap *m)
 {
-m->posdot.x= p.position.x;
-printf("x = %d && dot x = %d\n",p.position.x,m->posdot.x);
-m->posdot.y= p.position.y;
+
+m->posdot.x=(p.position2.x/6.25);
+m->posdot.y= p.position.y/11-p.sprite.h/11;
 //printf("dot pos x = %d y = %d\n",m->posdot.x,m->posdot.y);
+
 }
 
 int collisionPP(personne p,SDL_Surface *masque)
@@ -677,6 +680,11 @@ void init_back(background *b)
 SDL_Init(SDL_INIT_VIDEO);
 b->background=IMG_Load("back.jpg");
 
+
+b->positionperso.x=0;
+b->positionperso.y=0;
+
+
 b->PositionBg.x=0;
 b->PositionBg.y=0;
 
@@ -706,14 +714,14 @@ Mix_PlayMusic(music,-1);
 void scrolling_right(background *b, const int vitesse)
 {
   
-  b->positionperso.x+=2;
+ b->positionperso.x+=2;
   b->camera.x +=vitesse;
 
-if(b->camera.x >=8000-1440)
+if(b->camera.x >=8000-1500)
     {
       b->positionperso.x+=vitesse;
-      b->camera.x =8000-1440;
-      if(b->positionperso.x>1440)
+      b->camera.x =8000-1500;
+      if(b->positionperso.x>1500)
       {
         b->camera.x = 0;
         b->positionperso.x=0;
@@ -724,7 +732,7 @@ if(b->camera.x >=8000-1440)
 void scrolling_left(background *b, const int vitesse)
 {
 
- b->positionperso.x-=2;
+ b->positionperso.x-=10;
  b->camera.x-=vitesse;
 
 if(b->camera.x<=0)
