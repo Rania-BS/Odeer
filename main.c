@@ -35,8 +35,7 @@ for (int i=0;i<nb_enigme;i++)
  correct_ans+=enigme(screen,&e1,&e2,&e3,rep);
 }
 
- if (correct_ans>=nb_enigme/2)
-stage1(screen);
+ 
 
 
 
