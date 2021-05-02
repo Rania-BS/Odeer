@@ -137,4 +137,10 @@ void scrolling_up(background *b, const int vitesse);
 void scrolling_down(background *b, const int vitesse);
 /* partie background */
 
+/* partie enigme w/ file */
+
+int enigme (SDL_Surface *screen,int *e1,int *e2,int *e3,int rep );
+
+/* fin partie enigme */
+
 #endif // FUNCTIONS_H_INCLUDED

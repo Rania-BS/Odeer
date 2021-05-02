@@ -78,10 +78,6 @@ SDL_Event event;
 while(done){
 
 
-  //affichage background
-  position.x=0;
-  position.y=0;
-  SDL_BlitSurface(bg,NULL,screen,&position);
 
   //affichage question
   position.x=150;

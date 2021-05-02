@@ -98,6 +98,15 @@ void main()
     TTF_Init();
     police=TTF_OpenFont("./fonts/Roboto-Medium.ttf",25);
     //
+
+    /* partie enigme w/ file */
+
+    int e1,e2,e3,rep,correct_ans,nb_enigme;
+    e1=0;e2=0;e3=0;rep=0;correct_ans=0;
+    nb_enigme=3;
+                int testt=0;
+
+    /* fin partie enigme w/ file */
     
     /* initialisation perso */
     initPerso (&p);
@@ -133,19 +142,18 @@ void main()
 
     /* debut boucle du jeu */ while (boucle)
     {
-
              /* affichage du background */
             afficher_back(bg,screen);
                  /* fin affichage background */
-                
+
                 /* affichage du perso */
             afficherPerso (p,screen);
             /* fin affichage perso */
 
                     /* ES */
                         anim_coin(&c,&coin[0]);
-                        affichercoin(coin[0] ,screen);
-                        Collision_coin(coin[0],screen,pos,&col);
+                        affichercoin(coin[0] ,bg.background);
+                        Collision_coin(coin[0],bg.background,pos,&col);
                         if (col==1)
                         test=1;
                         image=IMG_Load("e1.png");
@@ -158,9 +166,9 @@ void main()
                         rect.x=dep_alea (1000,1050);
                         rect.y=900;
                         if(z==-1)
-                        SDL_BlitSurface(image,NULL, screen, &rect);
+                        SDL_BlitSurface(image,NULL, bg.background, &rect);
                         if(z==1)
-                        SDL_BlitSurface(image2,NULL, screen, &rect);
+                        SDL_BlitSurface(image2,NULL, bg.background, &rect);
                     /* fin ES */
 
                  /* MAJ minimap */
@@ -191,7 +199,19 @@ void main()
             /* collision detection function */
             collision=collisionPP(p,bg.masque);
             /* fin collision detection */
-             /* lire les events */    
+
+        /* affichage de l'enigme w/file */
+            if (p.position.x==500 && testt==0)
+            {
+                for (int i=0;i<nb_enigme;i++)
+                {
+                rep++;
+                correct_ans+=enigme(screen,&e1,&e2,&e3,rep);
+                }
+                testt=1;
+            }
+        /* fin affichage enigme */
+             /* lire les events */   
         while ( SDL_PollEvent( &event ) ) 
         { 
         switch ( event.type ) 
@@ -254,14 +274,10 @@ void main()
         }
 
         /* fin pollevent */
-
         /* scrolling of the background above */
-
-
             /* DON'T TOUCH THIS FLIP IT MAKES THE GAME SHOW !!! */ 
                     /* ------------------------------- */
                                SDL_Flip(screen);
                     /* ------------------------------- */
             }  
-
  }
