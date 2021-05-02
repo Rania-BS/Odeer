@@ -52,7 +52,7 @@ typedef struct e_coin
 { 
 SDL_Surface* image_coin;
 SDL_Rect pos;
-
+SDL_Rect sprite;
 }e_coin ;
 
 
@@ -62,7 +62,7 @@ void intialiser_coin(e_coin *coin,int x,int y);
 void affichercoin(e_coin coin,SDL_Surface *ecran);
 void anim_coin(int *i,e_coin *coin);
 int dep_alea ( int positionmax, int positionmin   );
-void Collision_coin(e_coin coin,SDL_Surface *ecran,SDL_Rect pos,int *col);
+int collisionBB(personne p, e_coin coin);
 
 /* fin partie ES */
 
@@ -87,6 +87,8 @@ typedef struct
      SDL_Rect PositionBg;
      SDL_Rect positionperso;
      SDL_Rect camera;
+     SDL_Surface *masque;
+     SDL_Rect posmasque;
 }background ;
 
 /* fin partie background */
@@ -134,5 +136,11 @@ void scrolling_left(background *b, const int vitesse);
 void scrolling_up(background *b, const int vitesse);
 void scrolling_down(background *b, const int vitesse);
 /* partie background */
+
+/* partie enigme w/ file */
+
+int enigme (SDL_Surface *screen,int *e1,int *e2,int *e3,int rep );
+
+/* fin partie enigme */
 
 #endif // FUNCTIONS_H_INCLUDED

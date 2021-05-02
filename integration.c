@@ -630,7 +630,7 @@ void anim_coin(int *i,e_coin *coin)
 }
 
 
-void Collision_coin(e_coin coin,SDL_Surface *ecran,SDL_Rect pos,int *col)
+/*void Collision_coin(e_coin coin,SDL_Surface *ecran,SDL_Rect pos,int *col)
 { 
 pos.x=pos.x-ecran->w;
   
@@ -650,6 +650,18 @@ pos.x=pos.x-ecran->w;
    if ((pos.y + ecran->h < coin.pos.y) ||(pos.y > coin.pos.y)||(coin.pos.x+coin.image_coin->w < pos.x)||(coin.pos.x > pos.x+ecran->w ))  // trop en haut
    {*col=0;}
 
+}*/
+
+int collisionBB(personne p, e_coin coin)
+{
+int collision=0; 
+if ((coin.pos.x>p.pos.x+p.sprite.w) || (p.pos.x>=coin.pos.x+coin.sprite.w) || (p.pos.y>=coin.pos.y+coin.sprite.h) || (coin.pos.y>=p.pos.y+p.sprite.h))
+{
+collision=0;
+}
+else 
+collision=1;
+return collision;
 }
 
 /* fin partie ES */
@@ -660,6 +672,7 @@ void initminimap(minimap *m)
 {
 m->map= IMG_Load("minimap.jpg");
 m->dot= IMG_Load("dot.png");
+
 }
 
 void afficherminimap(minimap m,SDL_Surface* screen)
@@ -699,16 +712,24 @@ box[4][0]=p.position.x+p.sprite.w;box[4][1]=p.position.y+(p.sprite.h/2);
 box[5][0]=p.position.x;box[5][1]=p.position.y+p.sprite.h;
 box[6][0]=p.position.x+(p.image0->w/2);box[6][1]=p.position.y+p.sprite.h;
 box[7][0]=p.position.x+p.sprite.w;box[7][1]=p.position.y+p.sprite.h;
-for(i=0;i<8;i++)
-for(i=0;i<8;i++)
+
+for(i=0;i<8;i++) // 1 up -- 2 right -- 3 bottom -- 4 left
 {
 SDL_GetRGB(getpixel(masque,box[i][a],box[i][j]),masque->format,&color.r,&color.g,&color.b);
-
 if (color.r==255 && color.g==255 && color.b==255)
 {
-collision=1;
+  if (i==0 || i == 1 || i == 2)
+    collision = 1;
+            else if (i==3)
+            collision=4;
+                else if (i==4)
+                  collision = 2;
+                      else if (i==5 || i == 6 || i == 7)
+                          collision=3;
 }
+
 }
+
 return collision;
 }
 
@@ -758,21 +779,25 @@ b->positionperso.x=0;
 b->positionperso.y=0;
 
 
+b->masque = IMG_Load("masque.jpg");
+b->posmasque.x=0;
+b->posmasque.y=-5;
+
 b->PositionBg.x=0;
 b->PositionBg.y=0;
-
-
 b->camera.x = 0;
 b->camera.y = 0;
 b->camera.w = 8000;
 b->camera.h = 1080;
+
+
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 
 void afficher_back(background b , SDL_Surface *screen)
 {
-
+SDL_BlitSurface(b.masque,NULL,screen,&(b.posmasque));
 SDL_BlitSurface(b.background,&(b.camera),screen,&(b.PositionBg));
 }
 //---------------------------------------------------------------------------------------------------------------------
@@ -848,3 +873,133 @@ void scrolling_down(background *b, const int vitesse)
 }
 
 /* fin partie background */
+
+/* partie enigme w/ file */
+
+int enigme (SDL_Surface *screen,int *e1,int *e2,int *e3,int rep ){
+//lecture aleatoire des questions et reponses a partir du fichier
+
+int nb_ligne_fichier=4;
+
+
+FILE* fichier_question=NULL;
+FILE* fichier_reponse=NULL;
+
+char question[256]=""; // enregistre question dans chaine
+char reponse[256]=""; // enregistre reponse dans chaine
+
+int res=0;//donne le resultat de la resolution : vrai->1 | faux->0 (par defaut)
+int r=0;//enregistre la val aleatoire
+
+//enregistrer un nombre de ligne aleatoire dans e(i) =>enigme(i)
+do {
+  srand(time(NULL));
+
+  r=rand()%nb_ligne_fichier+1;
+
+
+} while(r==(*e1) ||r==(*e3) ||r==(*e2));
+
+if (rep==1) (*e1)=r;
+if (rep==2) (*e2)=r;
+if(rep==3) (*e3)=r;
+
+fichier_question=fopen("question.txt","r");
+fichier_reponse=fopen("reponse.txt", "r");
+
+int cont_ligne=0;
+while (fgets(question,256,fichier_question)!=NULL && fgets(reponse,256,fichier_reponse)!=NULL){
+
+cont_ligne++;
+
+if(cont_ligne==r)
+break;
+
+}
+
+//affichage des questions et reponses dans l'ecran / la fenetre
+TTF_Init();
+
+//declaration
+SDL_Surface *texte_question=NULL, *texte_reponse=NULL, *bg=NULL;
+SDL_Rect  position;
+TTF_Font *police=NULL;
+SDL_Color couleur_noire={0,0,0}; //type RBG
+
+//initialisation
+bg=IMG_Load("backenigme.jpg");
+police=TTF_OpenFont("font.ttf",30);//(nom font, taille)
+texte_question=TTF_RenderText_Blended(police,question,couleur_noire);
+texte_reponse=TTF_RenderText_Blended(police,reponse,couleur_noire);
+
+
+
+//boucle pseudo infinie
+int done=1;
+SDL_Event event;
+
+
+while(done){
+
+printf("value of done = %d\n",done);
+
+  //affichage background
+  position.x=0;
+  position.y=0;
+  SDL_BlitSurface(bg,NULL,screen,&position);
+
+  //affichage question
+  position.x=150;
+  position.y=200;
+  SDL_BlitSurface(texte_question,NULL,screen,&position);
+
+  //affichage reponse
+  position.x=150;
+  position.y=400;
+  SDL_BlitSurface(texte_reponse,NULL,screen,&position);
+
+  SDL_Flip(screen);
+
+
+//recuperation de la reponse
+
+if(SDL_PollEvent(&event)){
+switch (event.type) {
+
+  case SDL_KEYDOWN:
+switch (event.key.keysym.sym) {
+
+  case SDLK_KP1:
+if (r==2) { res=1;
+done=0; }
+  break;
+
+  case SDLK_KP2:
+  if (r==4) {res=1;
+  done=0; }
+  break;
+
+  case SDLK_KP3:
+  if (r==1 || r==3) { res=1;
+  done=0; }
+  break;
+
+}
+  break;
+}//fin switch event
+}
+
+
+}//fin while
+
+TTF_CloseFont(police);
+TTF_Quit();
+SDL_FreeSurface(texte_reponse);
+SDL_FreeSurface(texte_question);
+SDL_FreeSurface(bg);
+
+TTF_Quit();
+return res;
+}
+
+/* fin partie enigme */
