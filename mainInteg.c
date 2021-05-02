@@ -60,7 +60,6 @@ void main()
     int running=1,y,minES=600, max = 800,z=1,k,i=1,r=500,c=1,j,t=1,test=0,col;
     int numkeys;
 	Uint8 * keys;
-
 	Uint32 timer,elapsed;
 
     e_coin coin[6];
