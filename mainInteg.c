@@ -152,7 +152,7 @@ void main()
                     /* ES */
                         anim_coin(&c,&coin[0]);
                         affichercoin(coin[0] ,bg.background);
-                        Collision_coin(coin[0],bg.background,pos,&col);
+                        collisionBB(p,coin);
                         if (col==1)
                         test=1;
                         image=IMG_Load("e1.png");
