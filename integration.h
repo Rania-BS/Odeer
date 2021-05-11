@@ -99,6 +99,7 @@ typedef struct
 
 void initPerso (personne *p ) ;
 void afficherPerso (personne p, SDL_Surface *screen)  ;
+void afficher_scorevie(personne p, SDL_Surface *screen) ; 
 void calculerscore (personne *p);
 void deplacer (personne *p,int direction ) ; 
 void animer ( personne *p, int direction  ) ; 
@@ -107,14 +108,7 @@ void repterS( personne *p ) ;
 void saut(personne *p);
 void sautt(personne *p);
 
-void afficherPersoMULTI (personne h, SDL_Surface *screen) ;
 void initPersoMULTI (personne *h )  ; 
-void calculerscoreMULTI (personne *h) ; 
-void sautMULTI(personne *h);
-void deplacerMULTI (personne *h,int direction );
-void animerMULTI ( personne *h, int direction  )  ;
-void repterSMULTI(personne *h) ;
-void apresSMULTI(personne *h);
 
 /* fin partie perso */
 
