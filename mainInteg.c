@@ -147,6 +147,7 @@ void main()
 
                 /* affichage du perso */
             afficherPerso (p,screen);
+	    afficher_scorevie(p, screen);
             /* fin affichage perso */
 
                     /* ES */
