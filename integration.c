@@ -126,39 +126,36 @@ if (p.v.nb==0)
     p.v.ps1.y=150; 
 
 }
+  SDL_BlitSurface (p.image0,&p.sprite, screen , &(p.position)) ;
 }
 /** 
-* @brief To affich persoMULTI
-* @param h personne
+* @brief To afficher vie,score
+* @param p personne
 * @param screen the screen 
 * @return Nothing 
 */
-void afficherPersoMULTI (personne h, SDL_Surface *screen) 
-{ 
-  
-  SDL_BlitSurface (h.image0,&h.sprite, screen , &(h.position) ) ;
-  SDL_BlitSurface(h.s.texte, NULL, screen, &h.s.poss);
-
- if (h.v.nb==3)
-  SDL_BlitSurface(h.v.vie3,NULL,screen,&h.v.ps1) ;
-
-if (h.v.nb==2) 
-  SDL_BlitSurface(h.v.vie2,NULL,screen,&h.v.ps1) ; 
-if (h.v.nb==1)
-  SDL_BlitSurface(h.v.vie1,NULL,screen,&h.v.ps1) ; 
-if (h.v.nb==0)
+void afficher_scorevie(personne p, SDL_Surface *screen)
 {
-   h.v.ps1.x=0 ; 
-   h.v.ps1.y=0;
-   SDL_BlitSurface(h.v.gameover,NULL,screen,&h.v.ps1) ;
-   h.v.nb=3 ; 
-    SDL_Flip(screen) ;
-   SDL_Delay (4) ; 
-    h.v.ps1.x=100 ; 
-    h.v.ps1.y=150; 
+  SDL_BlitSurface(p.s.texte, NULL, screen, &p.s.poss);
 
+  if (p.v.nb == 3)
+    SDL_BlitSurface(p.v.vie3, NULL, screen, &p.v.ps1);
+
+  if (p.v.nb == 2)
+    SDL_BlitSurface(p.v.vie2, NULL, screen, &p.v.ps1);
+  if (p.v.nb == 1)
+    SDL_BlitSurface(p.v.vie1, NULL, screen, &p.v.ps1);
+  if (p.v.nb == 0)
+  {
+    p.v.ps1.x = 0;
+    p.v.ps1.y = 0;
+    SDL_BlitSurface(p.v.gameover, NULL, screen, &p.v.ps1);
+    p.v.nb = 3;
+    SDL_Flip(screen);
+  }
 }
-}
+
+
 /** 
 * @brief To calcul score
 * @param p personne
@@ -185,36 +182,6 @@ void calculerscore (personne *p)
    
     sprintf(p->s.chaine,"score:%d",p->s.scoree);
     p->s.texte = TTF_RenderText_Blended(police,p->s.chaine,couleurblanche);
-
-    TTF_CloseFont(police);
-    TTF_Quit();
-}
-/** 
-* @brief To calcul scoreMULTI
-* @param h personne
-* @return Nothing 
-*/
-void calculerscoreMULTI (personne *h)
-{ 
-   
-    TTF_Init();
-    SDL_Surface *texte=NULL;
-    TTF_Font *police= NULL;
-    SDL_Color couleurblanche = {250, 250, 250};
-
-    police = TTF_OpenFont("fast99.ttf", 50);
-    if(!police) {
-	printf("TTF_OpenFont: %s\n", TTF_GetError());
-    }
-    if (h->position.x >= h->s.max)
-{  
-    h->s.max =h->position.x ; 
-    h->s.scoree+=1;
-    SDL_Delay(10);  
-}
-   
-    sprintf(h->s.chaine,"score:%d",h->s.scoree);
-    h->s.texte = TTF_RenderText_Blended(police,h->s.chaine,couleurblanche);
 
     TTF_CloseFont(police);
     TTF_Quit();
@@ -414,173 +381,7 @@ void apresS(personne *p)
 }
 
 
-/** 
-* @brief To move personMULTI
-* @param h personne
-* @param direction the direction 
-* @return Nothing 
-*/
 
-void deplacerMULTI (personne *h,int direction )
-{ 
-  SDL_Event event ; 
-   SDL_KEYDOWN : 
-{
-  switch (direction)
-{  
-  case 0 : 
-    { 
-     h->position.x+=10 ; 
-   if (event.key.keysym.sym==SDLK_m)
-        { 
-             h->position.x +=50 ; 
-         }
-      break ;  
-}
- case 1 : 
-{  
-h->position.x-= 10 ;
-     if (event.key.keysym.sym==SDLK_m)
-        { 
-             h->position.x -=50 ; 
-         }
-      break ;  
-}
-}
-} 
-  if (h->position.x<0)
-    {
-     h->position.x= 0 ; 
-    } 
-  if (h->position.x +195 > 966 ) 
-  { 
-     h->position.x = 966-195 ; 
-  }   
-}
-
-/** 
-* @brief To animate personMULTI
-* @param h personne
-* @param direction the direction 
-* @return Nothing 
-*/
-      //****animation***//
-void animerMULTI ( personne *h, int direction  ) 
-{
-  switch (direction) 
-{ 
-case 0:
-{ 
-  h->sprite.y=80;
-  if (h->sprite.x >= 52) 
-  {
-   h->sprite.x =0 ; 
-  }
-  else 
-    h->sprite.x += 52 ; 
-
-
-}break ; 
-case 1 :
-{ 
- 
-  h->sprite.y=0;
-  if (h->sprite.x >= 52) 
-  {
-   h->sprite.x =0 ; 
-  }
-  else 
-    h->sprite.x += 52 ; 
-}break ; 
-}
-} 
-
-/** 
-* @brief To initsaut personMULTI
-* @param h personne
-* @return Nothing 
-*/
-
-
-     /****saut**/
-
-
-void repterSMULTI(personne *h)
-{
-    h->speedup = 0;
-    h->gravity = 0;
-    h->speeddown = 20;
-    h->position.y = 540;
-}
-
-/** 
-* @brief To jump personMULTI
-* @param h personne
-* @return Nothing 
-*/
-void sautMULTI(personne *h)
-{
-    
-    if (h->gravity == 0)
-    {
-        SDL_Delay(h->speedup);
-        h->position.y -= (h->position.y / 25);
-    }
-    while (h->speedup <= 10)
-    {
-        h->speedup += 1;
-    }
-    if (h->position.y <= 790)
-    {
-        h->gravity = 1;
-    }
-    while (h->gravity == 1)
-    {
-
-        if (h->speeddown >= 1)
-        {
-            h->speeddown -= 1;
-        }
-      
-        if (h->position.y >= h->ground)
-        {
-            repterS(h);
-            h->position.y = 850;
-            h->personneisjumping = 0; 
-        }
-        if (h->position.y != h->ground) 
-        {
-            h->position.y = 850;
-        }
-    }
-
-  
-}
-/** 
-* @brief To ajump person
-* @param h personne
-* @return Nothing 
-*/
-void apresSMULTI(personne *h)
-{
-    int speeddown;
-    speeddown = h->speeddown; 
-    while (speeddown >= 1)
-    {
-        speeddown -= 1;
-    }
-    if (h->position.y < h->ground) 
-    {
-        h->position.y = (h->position.y + h->ground);
-        SDL_Delay(speeddown);
-    }
-    while (h->position.y > h->ground) 
-    {
-        h->position.y = h->ground;
-        h->personneisjumping = 0;
-    }
-    SDL_Delay(20);
-}
 
 /* fin partie perso */
 
