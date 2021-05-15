@@ -36,7 +36,7 @@ p->sprite.w= 52;
     p->personneisjumping = 0;
 
   
-    p->s.poss.x = 10;
+    p->s.poss.x = 100;
     p->s.poss.y = 40;
     p->s.max = 0;
     p->s.scoree=0 ; 
@@ -105,7 +105,8 @@ void afficherPerso (personne p, SDL_Surface *screen)
 { 
   
  SDL_BlitSurface (p.image0,&p.sprite, screen , &(p.position) ) ;
-  // SDL_BlitSurface(p.s.texte, NULL, screen, &p.s.poss);
+ 
+ //SDL_BlitSurface(p.s.texte, NULL, screen, &(p.s.poss));
 
  if (p.v.nb==3)
   SDL_BlitSurface(p.v.vie3,NULL,screen,&p.v.ps1) ;
@@ -661,6 +662,7 @@ collision=0;
 }
 else 
 collision=1;
+printf("%d in collision function \n",collision);
 return collision;
 }
 
@@ -1003,3 +1005,573 @@ return res;
 }
 
 /* fin partie enigme */
+
+
+void singleplayer(SDL_Surface *screen)
+{
+    /* lire les evenements */ SDL_Event event;
+    /* music du jeu */ Mix_Music *musique;
+    /* background du jeu */
+   /* boucle du jeu */ int boucle=1;
+
+    /* partie perso */
+    personne p; 
+    personne h ;  
+    vie v ;     
+    score s ;  
+    /*fin partie perso*/
+
+    /* partie ES */
+    int running=1,y,minES=600, max = 800,z=1,k,i=1,r=500,c=1,j,t=1,test=0,col;
+    int numkeys;
+	Uint8 * keys;
+	Uint32 timer,elapsed;
+
+    e_coin coin[6];
+	const int FPS=5;
+    SDL_Surface *image;
+    SDL_Surface *image2;
+    SDL_WM_SetCaption("LOST LIFE",NULL);
+    SDL_Rect rect;
+    rect.x=dep_alea (800,0);
+    rect.y=700;
+    /* fin partie ES */
+
+    /* background down */
+    background bg;
+    bool run = true;
+    bool bouton[4] = {0};
+    const int vitesse= 10;
+    /* background up */
+    
+    /* partie minimap */
+    minimap m;
+    int temps=0,hours,min,collision;
+    char buffer[20],str_time[20];
+    SDL_Rect pos;
+    pos.x=0;
+    pos.y=0;
+    // font
+    TTF_Font* police=NULL;
+    SDL_Surface *texte=NULL;
+    SDL_Rect postext;
+    SDL_Color white={255,255,255};
+    TTF_Init();
+    police=TTF_OpenFont("./fonts/Roboto-Medium.ttf",25);
+    //
+
+    /* partie enigme w/ file */
+
+    int e1,e2,e3,rep,correct_ans,nb_enigme;
+    e1=0;e2=0;e3=0;rep=0;correct_ans=0;
+    nb_enigme=3;
+                int testt=0;
+
+    /* fin partie enigme w/ file */
+    
+    /* initialisation perso */
+    initPerso (&p);
+    /* fin initialisation perso */
+
+    /* initialisation ES */
+    intialiser_coin(&coin[0],700,800);
+  /*  intialiser_coin(&coin[1],1900,540);
+    intialiser_coin(&coin[2],5108,750);
+    intialiser_coin(&coin[3],6180,750);
+    intialiser_coin(&coin[4],8826,750);
+    intialiser_coin(&coin[5],8136,750); */
+    /* fin initialisation ES */
+
+    /* initialisation minimap */
+    initminimap(&m);
+    /* fin initialisation minimap */
+
+    /* fin partie minimap */
+
+
+     /* initialisation du background */
+     init_back(&bg);
+     /* fin initialisation background */
+
+     /* initialisation du son */ 
+        music(musique);
+     /* fin initialisation son */
+
+    /* debut boucle du jeu */ while (boucle)
+    {
+             /* affichage du background */
+            afficher_back(bg,screen);
+                 /* fin affichage background */
+
+                /* affichage du perso */
+            afficherPerso (p,screen);
+            calculerscore(&p);
+            /* fin affichage perso */
+
+                    /* ES */
+                        anim_coin(&c,&coin[0]);
+                        affichercoin(coin[0] ,screen);
+                        col = collisionBB(p,coin[0]);
+                        if (col==1)
+                        test=1;
+                        printf("col = %d\n",col);
+                        image=IMG_Load("e1.png");
+                        image2=IMG_Load("e2.png");
+                        if (k<rect.x)
+                        z=-1;
+                        else 
+                        z=1;
+                        k=dep_alea (800,300);
+                        rect.x=dep_alea (1000,1050);
+                        rect.y=900;
+                        if(z==-1)
+                        SDL_BlitSurface(image,NULL, screen, &rect);
+                        if(z==1)
+                        SDL_BlitSurface(image2,NULL, screen, &rect);
+                    /* fin ES */
+
+                 /* MAJ minimap */
+                    MAJMinimap(p,&m);
+                 /* fin MAJ Minimap */
+
+                 /* affichage minimap */
+                 afficherminimap(m,screen);
+                 /* fin affichage minimap */
+
+
+                 /* affichage du temps */
+                    postext.x=screen->w-250;
+                    postext.y=25;
+                    affichertemps(&temps);
+                    hours=temps/60;
+                    min=temps%60;
+                    sprintf(buffer,"%d ",hours);
+                    strcpy(str_time,buffer);
+                    strcat(str_time,"min(s) : ");
+                    strcpy(buffer,"\0");
+                    sprintf(buffer,"%d sec(s)",min);
+                    strcat(str_time,buffer);
+                    texte= TTF_RenderText_Blended(police,str_time,white);
+                    SDL_BlitSurface(texte,NULL,screen,&postext);
+                 /* fin affichage temps */
+
+            /* collision detection function */
+            collision=collisionPP(p,bg.masque);
+            /* fin collision detection */
+
+        /* affichage de l'enigme w/file */
+            if (p.position.x==500 && testt==0)
+            {
+                for (int i=0;i<nb_enigme;i++)
+                {
+                rep++;
+                correct_ans+=enigme(screen,&e1,&e2,&e3,rep);
+                }
+                testt=1;
+            }
+        /* fin affichage enigme */
+             /* lire les events */   
+        while ( SDL_PollEvent( &event ) ) 
+        { 
+        switch ( event.type ) 
+            {
+            case SDL_QUIT:
+                    boucle=0;
+                        break;
+                        case SDL_KEYDOWN:
+                    switch(event.key.keysym.sym)
+                    {
+                       
+                        case SDLK_RIGHT:
+                        if (collision!=2) {
+                            scrolling_right(&bg,vitesse);
+                            deplacer (&p,0 ) ; 
+                            calculerscore (&p);
+                            animer ( &p,0  ) ; 
+                        }
+                            break;
+                        case SDLK_LEFT:
+                        if (collision!=4)
+                        {
+                            scrolling_left(&bg,vitesse);
+                            deplacer (&p,1 ) ; 
+                            animer ( &p,1  ) ;
+                        }
+                            break;
+                        case SDLK_SPACE:
+                        if (collision!=1)
+                        {
+                            sautt(&p);
+                            if (p.personneisjumping==1)
+                            scrolling_up(&bg,vitesse);
+                            else
+                            scrolling_down(&bg,vitesse);
+                        }
+                        break ; //repterS(&p);
+                    }
+                    break;
+
+                case SDL_KEYUP:
+                    switch(event.key.keysym.sym)
+                    {
+                        
+                        case SDLK_RIGHT:
+                            bouton[0] = 0;
+                            break;
+                        case SDLK_LEFT:
+                            bouton[1] = 0;
+                            break;
+                        case SDLK_UP :
+                            bouton[2]= 0;
+                            break;
+                        case SDLK_DOWN:
+                            bouton[3] = 0;
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        /* fin pollevent */
+        /* scrolling of the background above */
+            /* DON'T TOUCH THIS FLIP IT MAKES THE GAME SHOW !!! */ 
+                    /* ------------------------------- */
+                               SDL_Flip(screen);
+                    /* ------------------------------- */
+            }  
+}
+
+/* menu functions */
+
+void indexpage(SDL_Surface *screen,Mix_Music *music)
+{
+
+    int boucle=1;
+    int selected=0;
+    int bgCounter=0;
+    SDL_Rect positems;
+    SDL_Event event;
+SDL_Surface *bg;
+char buttons[6][7]={"00.png","11.png","22.png","33.png","44.png","55.png"};
+char bgs[25][20]={"bg1.png","bg2.png","bg3.png","bg4.png","bg5.png","bg6.png","bg7.png","bg8.png","bg9.png","bg10.png","bg10.png","bg10.png","bg10.png","bg9.png","bg8.png","bg7.png","bg6.png","bg5.png","bg4.png","bg3.png","bg2.png","bg1.png","bg1.png","bg1.png","bg1.png"};
+SDL_Surface *menuitems;
+
+while (boucle)
+{
+    if (bgCounter==25)
+        bgCounter=0;
+        
+        bg=IMG_Load(bgs[bgCounter]);
+                bgCounter++; 
+        SDL_BlitSurface(bg,NULL,screen,0);
+
+while ( SDL_PollEvent( &event ) )
+{
+switch ( event.type )
+{
+    case SDL_QUIT:
+		{
+            boucle=0;
+		break;
+		}
+	case SDL_MOUSEMOTION:
+    {
+        if ((event.motion.x>=685 && event.motion.x<=990) && (event.motion.y>=395 && event.motion.y<=453))
+        {
+            selected=1;
+            }
+            else if ((event.motion.x>=677 && event.motion.x<=996) && (event.motion.y>=523 && event.motion.y<=586))
+                {
+                    selected=2;
+                }
+                else if ((event.motion.x>=684 && event.motion.x<=989) && (event.motion.y>=647 && event.motion.y<=712))
+                {
+                    selected=3;
+                }
+                else if ((event.motion.x>=702 && event.motion.x<=981) && (event.motion.y>=776 && event.motion.y<=840))
+                {
+                    selected=4;
+                }
+                else if ((event.motion.x>=762 && event.motion.x<=912) && (event.motion.y>=898 && event.motion.y<=964))
+                {
+                    selected=5;
+                }
+                else
+                {
+                    selected=0;
+                }
+                break;
+    }
+    case SDL_MOUSEBUTTONDOWN:
+				switch (event.button.button)
+					{
+					case SDL_BUTTON_LEFT:
+						switch(selected)
+                        {
+                            case 1:
+                            play(screen,music);
+                            break;
+                            case 2:
+                            printf("Action 2");
+                            break;
+                            case 3:
+                            printf("Action 3");
+                            break;
+                            case 4:
+                            boucle=0;
+                            optionspage(screen,music);
+                            break;
+                            case 5:
+                            boucle=0;
+                            break;
+                        }
+						break;
+					}
+	break;
+
+    case SDL_KEYDOWN:
+	switch(event.key.keysym.sym) {
+	case SDLK_DOWN: 
+	{
+	selected++;
+	if (selected>5)
+	selected=1;
+    break;
+	}
+	case SDLK_UP: 
+	{
+	selected--;
+	if (selected<=0)
+	selected=5;
+    break;
+	}
+    case SDLK_RETURN:
+	{
+        switch(selected)
+                        {
+                            case 1:
+                            play(screen,music);
+                            break;
+                            case 2:
+                            printf("Action 2");
+                            break;
+                            case 3:
+                            printf("Action 3");
+                            break;
+                            case 4:
+                            boucle=0;
+                            optionspage(screen,music);
+                            break;
+                            case 5:
+                            boucle=0;
+                            break;
+                        }
+                        break;
+	} 
+	}
+}
+}
+menuitems=IMG_Load(buttons[selected]);
+SDL_BlitSurface(menuitems,NULL,screen,0);
+SDL_Flip(screen);
+SDL_FreeSurface(menuitems);
+}
+}
+
+void optionspage(SDL_Surface *screen,Mix_Music *music)
+{
+    int boucle=1,selected,volume,max;
+    SDL_Event event;
+    SDL_Surface *bg=IMG_Load("options1.png");
+    SDL_Surface *selectedItem;
+    char buttons[3][16]={"options1.png","options2.png","options3.png"};
+    max=MIX_MAX_VOLUME;
+    while (boucle)
+    {
+                    SDL_BlitSurface(bg,NULL,screen,0);
+        while ( SDL_PollEvent( &event ) )
+        {
+          switch ( event.type )
+            {  
+              case SDL_QUIT:
+                {
+                    SDL_Quit();
+                break;
+                } 
+                case SDL_MOUSEMOTION:
+    {
+        if ((event.motion.x>=742 && event.motion.x<=937) && (event.motion.y>=302 && event.motion.y<=333))
+        {
+            selected=1;
+            }
+            else if ((event.motion.x>=750 && event.motion.x<=926) && (event.motion.y>=373 && event.motion.y<=409))
+                {
+                    selected=2;
+                }
+                else if ((event.motion.x>=60 && event.motion.x<=160) && (event.motion.y>=70 && event.motion.y<=147))
+                {
+                    selected=3;
+                }
+                else
+                {
+                   selected=0; 
+                } 
+               if ((event.motion.x>=719 && event.motion.x<=751) && (event.motion.y>=667 && event.motion.y<=700))
+                {
+                    volume=0;
+                }
+                else if ((event.motion.x>=769 && event.motion.x<=806) && (event.motion.y>=667 && event.motion.y<=700))
+                {
+                    volume=1;
+                }
+                else if ((event.motion.x>=820 && event.motion.x<=857) && (event.motion.y>=667 && event.motion.y<=700))
+                {
+                    volume=2;
+                }
+                else if ((event.motion.x>=875 && event.motion.x<=912) && (event.motion.y>=667 && event.motion.y<=700))
+                {
+                    volume=3;
+                }
+                else if ((event.motion.x>=923 && event.motion.x<=961) && (event.motion.y>=667 && event.motion.y<=700))
+                {
+                    volume=4;
+                }
+                break;
+    } 
+    case SDL_MOUSEBUTTONDOWN:
+				switch (event.button.button)
+					{
+					case SDL_BUTTON_LEFT:
+						switch(selected)
+                        {
+                            case 1:
+                            screen= SDL_SetVideoMode(1680,1080,32,SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+                            break;
+                            case 2:
+                            screen= SDL_SetVideoMode(1680,1080,32,SDL_HWSURFACE|SDL_DOUBLEBUF | SDL_RESIZABLE);
+                            break;
+                            case 3:
+                            boucle=0;
+                            indexpage(screen,music);
+                            break;
+                        }
+                        switch (volume)
+                        {
+                            case 0:
+                            Mix_VolumeMusic(0);
+                            break;
+                            case 1:
+                            Mix_VolumeMusic(25);
+                            break;
+                            case 2:
+                            Mix_VolumeMusic(50);
+                            break;
+                            case 3:
+                            Mix_VolumeMusic(75);
+                            break;
+                            case 4:
+                            Mix_VolumeMusic(128);
+                            break;
+                        }
+						break;
+					}
+	break;
+                case SDL_KEYDOWN:
+                switch(event.key.keysym.sym) {
+                    case SDLK_KP_MINUS: {
+                            max-=25;
+                        if (max<0)
+                            max=0;
+                            Mix_VolumeMusic(max);
+                        break; }
+                        case SDLK_KP_PLUS: {
+                            max+=25;
+                            if (max>128)
+                            max=128;
+                            Mix_VolumeMusic(max);
+                        break; }
+                }
+                break;
+            }
+        }
+        selectedItem=IMG_Load(buttons[selected]);
+        SDL_BlitSurface(selectedItem,NULL,screen,0);
+        SDL_Flip(screen);
+        SDL_FreeSurface(selectedItem);
+    }
+}
+
+void play(SDL_Surface *screen,Mix_Music *music)
+{
+    int boucle=1,selected=0;
+    SDL_Event event;
+    SDL_Surface *bg=IMG_Load("play.png");
+    SDL_Surface *selectedItem;
+    char buttons[3][16]={"play.png","play1.png","play2.png"};
+
+    while (boucle)
+    {
+
+        SDL_BlitSurface(bg,NULL,screen,0);
+        while ( SDL_PollEvent( &event ) )
+        {
+          switch ( event.type )
+            {  
+              case SDL_QUIT:
+                {
+                    SDL_Quit();
+                break;
+                } 
+                case SDL_MOUSEMOTION:
+    {
+        if ((event.motion.x>=350 && event.motion.x<=580) && (event.motion.y>=508 && event.motion.y<=543))
+        {
+            selected=1;
+            }
+            else if ((event.motion.x>=1082 && event.motion.x<=1302) && (event.motion.y>=510 && event.motion.y<=545))
+                {
+                    selected=2;
+                }
+                else if ((event.motion.x>=60 && event.motion.x<=160) && (event.motion.y>=70 && event.motion.y<=147))
+                {
+                    selected=3;
+                }
+                else
+                {
+                   selected=0; 
+                } 
+                break;
+    } 
+    case SDL_MOUSEBUTTONDOWN:
+				switch (event.button.button)
+					{
+					case SDL_BUTTON_LEFT:
+						switch(selected)
+                        {
+                            case 1:
+                            printf("insert single player here\n");
+                            boucle=0;
+                            singleplayer(screen);
+                            break;
+                            case 2:
+                            printf("insert multi player here\n");
+                            break;
+                            case 3:
+                            boucle=0;
+                            indexpage(screen,music);
+                            break;
+                        }
+						break;
+					}
+	break;
+            }
+        }
+        selectedItem=IMG_Load(buttons[selected]);
+        SDL_BlitSurface(selectedItem,NULL,screen,0);
+        SDL_Flip(screen);
+        SDL_FreeSurface(selectedItem);
+
+    }
+}
+
+/* end of menu functions */

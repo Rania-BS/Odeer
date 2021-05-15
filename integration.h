@@ -143,4 +143,18 @@ int enigme (SDL_Surface *screen,int *e1,int *e2,int *e3,int rep );
 
 /* fin partie enigme */
 
+/* single player */
+
+void singleplayer(SDL_Surface *screen);
+
+/**
+
+/* menu part */
+
+void indexpage(SDL_Surface *screen,Mix_Music *music);
+void optionspage(SDL_Surface *screen,Mix_Music *music);
+void play(SDL_Surface *screen,Mix_Music *music);
+
+/* fin part menu */
+
 #endif // FUNCTIONS_H_INCLUDED
