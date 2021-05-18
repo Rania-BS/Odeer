@@ -247,7 +247,7 @@ void animer ( personne *p, int direction  )
 {
   switch (direction) 
 { 
-case 0:
+case 1:
 { 
   p->sprite.y=80;
   if (p->sprite.x >= 52) 
@@ -259,7 +259,7 @@ case 0:
 
 
 }break ; 
-case 1 :
+case 0 :
 { 
  
   p->sprite.y=0;
